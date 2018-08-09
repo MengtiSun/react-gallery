@@ -32,6 +32,9 @@ html, body {
       padding: 40px;
       background-color: #fff;
       box-sizing: border-box;
+      &.is-inverse {
+        transform:rotateY(180deg);
+      }
     }
     figcaption {
       text-align: center;
