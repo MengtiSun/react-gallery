@@ -39,8 +39,8 @@ let ImgFigure = React.createClass({
       styleObj = this.props.arrange.pos;
     }
     if (this.props.arrange.rotate) {
-      ['-moz-', '-ms-', '-webkit-', ''].forEach((value)=>{
-          styleObj[value + 'transform'] = `rotate(${this.props.arrange.rotate}deg)`;
+      ['Moz', 'Ms', 'Webkit', ''].forEach((value)=>{
+          styleObj[value + 'Transform'] = `rotate(${this.props.arrange.rotate}deg)`;
       })
     }
     if (this.props.arrange.isCenter) {
@@ -62,6 +62,38 @@ let ImgFigure = React.createClass({
     );
   }
 })
+
+class ControllerUnit extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+  }
+  
+  handleClick(e) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (this.props.arrange.isCenter) {
+      this.props.inverse()
+    } else {
+      this.props.center();
+    }
+  }
+  render() {
+    let controllerUnitClassName = 'controller-unit';
+
+    if (this.props.arrange.isCenter) {
+      controllerUnitClassName += ' is-center';
+
+      if (this.props.arrange.isInverse) {
+        controllerUnitClassName += ' is-inverse'
+      }
+    }
+    return (
+      <span className={ controllerUnitClassName } onClick={this.handleClick}></span>
+    )
+  }
+}
 
 class AppComponent extends React.Component {
   constructor(props) {
@@ -118,12 +150,6 @@ class AppComponent extends React.Component {
     let topImgIndex = Math.floor(Math.random() * (imgsArrangeArr.length - topImgNum));
     let imgsArrangeTopArr = imgsArrangeArr.splice(topImgIndex, topImgNum);
     imgsArrangeTopArr.forEach((value)=> {
-      // imgsArrangeTopArr[index] = {
-      //   pos: {
-      //     top: getRangeRandom(this.Constant.vPosRange.topY[0], this.Constant.vPosRange.topY[1]),
-      //     left: getRangeRandom(this.Constant.vPosRange.x[0], this.Constant.vPosRange.x[1])
-      //   }
-      // }
       value.pos.top = getRangeRandom(this.Constant.vPosRange.topY[0], this.Constant.vPosRange.topY[1]);
       value.pos.left = getRangeRandom(this.Constant.vPosRange.x[0], this.Constant.vPosRange.x[1]);
       value.rotate = get30DegRandom();
@@ -210,10 +236,13 @@ class AppComponent extends React.Component {
           isCenter: false
         }
       }
-      imgFigures.push(<ImgFigure data={value} ref={'imgFigure' + index}
+      imgFigures.push(<ImgFigure key={index} data={value} ref={'imgFigure' + index}
                         arrange={this.state.imgsArrangeArr[index]}
                         inverse={this.inverse(index)}
                         center={this.center(index)}/>)
+      controllerUnits.push(<ControllerUnit key={index} arrange={this.state.imgsArrangeArr[index]}
+                            inverse={this.inverse(index)}
+                            center={this.center(index)}/>)
     });
 
     return (
